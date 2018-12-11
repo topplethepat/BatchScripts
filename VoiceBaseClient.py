@@ -1,9 +1,7 @@
-#works with Batchdownloadv3txt.py for plain text file result
+#works with BatchUploadURL, due to lines 56 & 64
 
 import requests
 import json
-
-
 
 
 class VoiceBaseClient:
@@ -15,7 +13,7 @@ class VoiceBaseClient:
     self.authorization_header = "Bearer " + self.token
 
   class VoiceBaseMedia:
-    """Media class for the Voicebase V2 API Client"""
+    """Media class for the Voicebase V3 API Client"""
     def __init__(self, client):
       self.client = client
 
@@ -37,12 +35,10 @@ class VoiceBaseClient:
       headers = { 'Authorization' : self.client.authorization_header }
 
       response = requests.get(
-        self.client.url + '/media/' + mediaId + '/transcript/text',
+        self.client.url + '/media/' + mediaId,
         headers = headers
       )
-      #return json.loads(response.text)
-      return(response.text)
-
+      return json.loads(response.text)
 
     def delete(self, mediaId):
       """Get a media item"""
@@ -57,7 +53,7 @@ class VoiceBaseClient:
       return json.loads(response.text)
 
     def post(self, 
-      file_stream, 
+      media_url, 
       filename, 
       mime_type,
       configuration = None,
@@ -65,7 +61,7 @@ class VoiceBaseClient:
 
       headers = { 'Authorization' : self.client.authorization_header }
       attachments = { 
-        'media': ( filename, file_stream, mime_type )
+        'mediaUrl': ( 'url', media_url, 'text/url' )
       }
 
       if configuration is not None:
